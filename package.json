@@ -1,0 +1,27 @@
+{
+  "name": "fuck-shorts",
+  "private": true,
+  "packageManager": "pnpm@11.22.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @fuck-shorts/website dev",
+    "build": "pnpm --filter @fuck-shorts/website build",
+    "db:generate": "pnpm --filter @fuck-shorts/db generate",
+    "db:migrate": "pnpm --filter @fuck-shorts/db migrate",
+    "db:studio": "pnpm --filter @fuck-shorts/db studio",
+    "test": "pnpm --filter @fuck-shorts/website --filter @fuck-shorts/generation-heuristic test",
+    "e2e": "pnpm --filter @fuck-shorts/website-e2e test",
+    "lint": "pnpm -r --if-present lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "prettier": "@fuck-shorts/prettier-config",
+  "devDependencies": {
+    "@fuck-shorts/prettier-config": "workspace:*",
+    "drizzle-kit": "^0.31.4",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2"
+  }
+}

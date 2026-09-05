@@ -1,0 +1,242 @@
+@import "tailwindcss";
+
+/* Letter highlight classes live in @fuck-shorts/i18n (pnpm workspace symlink). */
+@source "../../node_modules/@fuck-shorts/i18n";
+
+/* Class dark mode: toggle + boot script set `.dark` on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: "Syne", "Segoe UI", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
+  --color-ink: #14201b;
+  --color-paper: #f8f1e3;
+  --color-paper-end: #f3e8d4;
+  --color-moss: #1f6f4a;
+  --color-moss-deep: #0f3d2a;
+  --color-ink-blue: #1e4d7a;
+  --color-ember: #c44b16;
+  --color-raspberry: #c43d5a;
+  --color-vomit: #6e7612;
+  --color-fog: #ebe2d0;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-body);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    color-scheme: light;
+  }
+
+  /* Remap theme tokens — existing bg-paper / text-ink / etc. flip with one class. */
+  .dark {
+    color-scheme: dark;
+    --color-ink: #e8ebe4;
+    --color-paper: #121a16;
+    --color-paper-end: #0d1411;
+    --color-moss: #3d9a6a;
+    --color-moss-deep: #8fbfa3;
+    --color-ink-blue: #7aabdb;
+    --color-ember: #e07040;
+    --color-raspberry: #e0708a;
+    --color-vomit: #b8c04a;
+    --color-fog: #1e2a24;
+  }
+
+  body {
+    min-height: 100vh;
+    /* Keep decorative atmosphere (negative z) behind content for hit-testing. */
+    isolation: isolate;
+  }
+}
+
+/*
+ * Astro injects an unlayered `astro-island { display: contents }` style.
+ * Rules inside @layer lose to unlayered CSS, so this must stay unlayered —
+ * otherwise the island collapses and clicks miss Voice / Share / Sign.
+ */
+body > main > astro-island {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Page atmosphere: linear wash + soft floating orbs behind content */
+.page-atmosphere {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.page-atmosphere *,
+.page-atmosphere *::before,
+.page-atmosphere *::after {
+  pointer-events: none;
+}
+
+.page-atmosphere__gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 55% at 12% -10%, color-mix(in srgb, var(--color-fog) 70%, transparent) 0%, transparent 58%),
+    radial-gradient(ellipse 70% 45% at 92% 8%, color-mix(in srgb, var(--color-moss) 12%, transparent) 0%, transparent 55%),
+    linear-gradient(
+      165deg,
+      var(--color-paper) 0%,
+      color-mix(in srgb, var(--color-fog) 55%, var(--color-paper)) 42%,
+      color-mix(in srgb, var(--color-moss) 8%, var(--color-paper)) 72%,
+      var(--color-paper-end) 100%
+    );
+}
+
+.page-atmosphere__noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.28;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+}
+
+/* Multiply on dark paper goes muddy — overlay keeps the grain visible. */
+.dark .page-atmosphere__noise {
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+}
+
+.page-atmosphere__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(56px);
+  will-change: transform;
+}
+
+.page-atmosphere__orb--moss {
+  top: -8%;
+  left: -6%;
+  width: min(42vw, 28rem);
+  height: min(42vw, 28rem);
+  background: color-mix(in srgb, var(--color-moss) 22%, transparent);
+  animation: orb-drift 22s ease-in-out infinite;
+}
+
+.page-atmosphere__orb--ember {
+  top: 18%;
+  right: -10%;
+  width: min(36vw, 22rem);
+  height: min(36vw, 22rem);
+  background: color-mix(in srgb, var(--color-ember) 16%, transparent);
+  animation: orb-float 18s ease-in-out infinite;
+}
+
+.page-atmosphere__orb--ink-blue {
+  bottom: 8%;
+  left: 18%;
+  width: min(48vw, 32rem);
+  height: min(48vw, 32rem);
+  background: color-mix(in srgb, var(--color-ink-blue) 14%, transparent);
+  animation: orb-pulse 26s ease-in-out infinite;
+}
+
+.page-atmosphere__orb--raspberry {
+  bottom: -12%;
+  right: 8%;
+  width: min(30vw, 18rem);
+  height: min(30vw, 18rem);
+  background: color-mix(in srgb, var(--color-raspberry) 12%, transparent);
+  animation: orb-drift 20s ease-in-out infinite reverse;
+  animation-delay: -6s;
+}
+
+@keyframes orb-drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(3.5%, 4%);
+  }
+  66% {
+    transform: translate(-2.5%, 2%);
+  }
+}
+
+@keyframes orb-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-4%, 5%) scale(1.06);
+  }
+}
+
+@keyframes orb-pulse {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(2%, -3%) scale(1.1);
+    opacity: 1;
+  }
+}
+
+@keyframes tally-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Softer replay when the voice locale switches (not used on first paint). */
+@keyframes voice-swap {
+  from {
+    opacity: 0.2;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-voice-swap {
+  animation: voice-swap 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-voice-swap,
+  .animate-tally {
+    animation: none;
+  }
+}
+
+.animate-tally {
+  animation: tally-pop 420ms ease-out;
+}

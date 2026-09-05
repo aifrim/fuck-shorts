@@ -1,0 +1,15 @@
+{
+  "name": "@fuck-shorts/website-e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^22.18.1",
+    "typescript": "^5.9.2"
+  }
+}

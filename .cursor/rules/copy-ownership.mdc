@@ -1,0 +1,15 @@
+---
+description: Petition copy lives in packages/i18n; website components only render it
+globs: "{packages/i18n/**,apps/website/src/components/**,apps/website/src/pages/**,apps/website/src/server/og.ts}"
+alwaysApply: false
+---
+
+# Copy ownership
+
+User-facing wording lives in `@fuck-shorts/i18n` (`packages/i18n`). Website components stay thin: they import and render. They do not own the attitude.
+
+- Copy changes land in `packages/i18n` (messages, letters, OG taglines, brand, voices).
+- Do not add new user-facing English strings inside `apps/website` components, pages, or OG markup.
+- “i18n” here means five English voice locales (`genalpha` / `genz` / `millennial` / `boomer` / `generic`), not additional languages.
+
+No regex — that is already a repo-wide coding standard.

@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fuck-shorts-website",
+  // Astro SSR Worker entry (after `astro build`).
+  "main": "./dist/_worker.js/index.js",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist",
+  },
+  // Astro sessions — Wrangler provisions the namespace on deploy when `id` is omitted.
+  "kv_namespaces": [
+    {
+      "binding": "SESSION",
+    },
+  ],
+  "triggers": {
+    "crons": ["0 * * * *"],
+  },
+  "vars": {
+    "PETITION_START": "2026-09-06T00:00:00.000Z",
+    // Local wrangler / CF preview — production should use 3600 (or omit for the same default).
+    "VOTES_CACHE_TTL_SECONDS": "60",
+  },
+}

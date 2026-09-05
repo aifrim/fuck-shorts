@@ -1,0 +1,100 @@
+---
+import { getVoteCount } from "@fuck-shorts/db";
+import {
+  PAGE_DESCRIPTION,
+  SITE_TITLE,
+  SITE_URL,
+} from "@fuck-shorts/i18n";
+
+import PetitionMain from "../components/PetitionMain";
+import { getDb } from "../server/db";
+import { websiteEnvFromAstroLocals } from "../server/env";
+import { THEME_STORAGE_KEY } from "../theme";
+import "../styles/global.css";
+
+export const prerender = false;
+
+const SITE_ORIGIN =
+  import.meta.env.PUBLIC_SITE_ORIGIN?.trim() || SITE_URL;
+const OG_IMAGE = `${SITE_ORIGIN}/og.png`;
+
+const env = await websiteEnvFromAstroLocals(Astro.locals);
+const db = getDb(env);
+let initialCount = 0;
+
+try {
+  initialCount = await getVoteCount(db);
+} catch (error) {
+  console.error("[ssr] getVoteCount failed", error);
+}
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    {/* Apply theme before paint so OS-dark users are not blinded by cream. */}
+    <script is:inline define:vars={{ THEME_STORAGE_KEY }}>
+      (function () {
+        try {
+          var stored = localStorage.getItem(THEME_STORAGE_KEY);
+          var dark = false;
+
+          if (stored === "dark") {
+            dark = true;
+          } else if (stored === "light") {
+            dark = false;
+          } else if (
+            typeof window.matchMedia === "function" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+          ) {
+            dark = true;
+          }
+
+          document.documentElement.classList.toggle("dark", dark);
+          document.documentElement.style.colorScheme = dark ? "dark" : "light";
+        } catch (e) {
+          /* private mode / blocked storage — leave light */
+        }
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={PAGE_DESCRIPTION} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={SITE_ORIGIN} />
+    <meta property="og:title" content={SITE_TITLE} />
+    <meta property="og:description" content={PAGE_DESCRIPTION} />
+    <meta property="og:image" content={OG_IMAGE} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={SITE_TITLE} />
+    <meta name="twitter:description" content={PAGE_DESCRIPTION} />
+    <meta name="twitter:image" content={OG_IMAGE} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>{SITE_TITLE}</title>
+  </head>
+  <body class="relative flex min-h-screen flex-col overflow-x-hidden">
+    <div class="page-atmosphere" aria-hidden="true">
+      <div class="page-atmosphere__gradient"></div>
+      <div class="page-atmosphere__noise"></div>
+      <div class="page-atmosphere__orb page-atmosphere__orb--moss"></div>
+      <div class="page-atmosphere__orb page-atmosphere__orb--ember"></div>
+      <div class="page-atmosphere__orb page-atmosphere__orb--ink-blue"></div>
+      <div class="page-atmosphere__orb page-atmosphere__orb--raspberry"></div>
+    </div>
+
+    {/* Document <main> wraps the island; Solid must not render a second <main>. */}
+    <main class="relative z-10 flex flex-1 flex-col">
+      <PetitionMain
+        client:load
+        petitionStart={import.meta.env.PUBLIC_PETITION_START ?? ""}
+        initialCount={initialCount}
+      />
+    </main>
+  </body>
+</html>

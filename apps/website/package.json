@@ -1,0 +1,44 @@
+{
+  "name": "@fuck-shorts/website",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "fonts:og": "node ./scripts/copy-og-fonts.mjs",
+    "predev": "pnpm fonts:og",
+    "dev": "astro dev --port 4325 --strictPort",
+    "prebuild": "pnpm fonts:og",
+    "build": "astro build",
+    "preview": "astro preview --port 4325 --strictPort",
+    "deploy": "astro build && wrangler deploy",
+    "pretest": "pnpm fonts:og",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.6.13",
+    "@astrojs/solid-js": "^5.1.0",
+    "@cf-wasm/resvg": "^0.4.0",
+    "@cf-wasm/satori": "^0.4.0",
+    "@fingerprintjs/fingerprintjs": "^4.6.2",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@fontsource/syne": "^5.3.0",
+    "@fuck-shorts/db": "workspace:*",
+    "@fuck-shorts/generation-heuristic": "workspace:*",
+    "@fuck-shorts/i18n": "workspace:*",
+    "@tailwindcss/vite": "^4.1.13",
+    "astro": "^5.13.7",
+    "drizzle-orm": "^0.44.7",
+    "solid-js": "^1.9.9",
+    "tailwindcss": "^4.1.13"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260702.1",
+    "@fuck-shorts/eslint-config": "workspace:*",
+    "@types/node": "^22.18.1",
+    "eslint": "^9.35.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.7",
+    "wrangler": "^4.129.0"
+  }
+}
