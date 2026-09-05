@@ -1,0 +1,159 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Default / production (Workers Builds uses this when CLOUDFLARE_ENV=production).
+  "name": "fuck-shorts",
+  // Astro 6+/7: source Worker entry (Vite plugin / wrangler), not dist/_worker.js.
+  "main": "./src/worker.ts",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist",
+  },
+  "triggers": {
+    "crons": ["0 * * * *"],
+  },
+  "vars": {
+    // Keep identical to PUBLIC_PETITION_START in the monorepo root `.env`.
+    "PETITION_START": "2026-09-06T00:00:00.000Z",
+    // Optional ISO end (e.g. "2027-01-01T00:00:00.000Z"); omit for no close date.
+    // Local `astro dev` / Miniflare uses top-level vars; preview + production override below.
+    "SIGNATURES_CACHE_TTL_SECONDS": "60",
+  },
+  // Generous local limits — parallel Playwright signs share 127.0.0.1.
+  "ratelimits": [
+    {
+      "name": "SIGN_RATE_LIMIT",
+      "namespace_id": "1001",
+      "simple": { "limit": 1000, "period": 60 },
+    },
+    {
+      "name": "SIGN_GLOBAL_RATE_LIMIT",
+      "namespace_id": "1002",
+      "simple": { "limit": 1000, "period": 10 },
+    },
+    {
+      "name": "SIGNATURES_RATE_LIMIT",
+      "namespace_id": "1003",
+      "simple": { "limit": 1000, "period": 60 },
+    },
+    {
+      "name": "OG_RATE_LIMIT",
+      "namespace_id": "1004",
+      "simple": { "limit": 1000, "period": 60 },
+    },
+    {
+      "name": "OG_GLOBAL_RATE_LIMIT",
+      "namespace_id": "1005",
+      "simple": { "limit": 1000, "period": 10 },
+    },
+  ],
+  "env": {
+    "preview": {
+      "name": "fuck-shorts-website-preview",
+      "vars": {
+        "PETITION_START": "2026-09-04T00:00:00.000Z",
+        "SIGNATURES_CACHE_TTL_SECONDS": "3600",
+      },
+      "assets": {
+        "binding": "ASSETS",
+        "directory": "./dist",
+      },
+      "triggers": {
+        "crons": ["0 * * * *"],
+      },
+      // Distinct namespace_ids so preview does not share counters with production.
+      "ratelimits": [
+        {
+          "name": "SIGN_RATE_LIMIT",
+          "namespace_id": "2001",
+          "simple": { "limit": 5, "period": 60 },
+        },
+        {
+          "name": "SIGN_GLOBAL_RATE_LIMIT",
+          "namespace_id": "2002",
+          "simple": { "limit": 80, "period": 10 },
+        },
+        {
+          "name": "SIGNATURES_RATE_LIMIT",
+          "namespace_id": "2003",
+          "simple": { "limit": 20, "period": 60 },
+        },
+        // OG render (satori + resvg) is CPU-heavy — tighter than the tally GET.
+        {
+          "name": "OG_RATE_LIMIT",
+          "namespace_id": "2004",
+          "simple": { "limit": 10, "period": 60 },
+        },
+        {
+          "name": "OG_GLOBAL_RATE_LIMIT",
+          "namespace_id": "2005",
+          "simple": { "limit": 40, "period": 10 },
+        },
+      ],
+    },
+    // Explicit target for CLOUDFLARE_ENV=production (same bindings as top-level).
+    "production": {
+      "name": "fuck-shorts-website",
+      "vars": {
+        "PETITION_START": "2026-09-10T00:00:00.000Z",
+        "SIGNATURES_CACHE_TTL_SECONDS": "3600",
+      },
+      "assets": {
+        "binding": "ASSETS",
+        "directory": "./dist",
+      },
+      "triggers": {
+        "crons": ["0 * * * *"],
+      },
+      "ratelimits": [
+        {
+          "name": "SIGN_RATE_LIMIT",
+          "namespace_id": "3001",
+          "simple": { "limit": 5, "period": 60 },
+        },
+        {
+          "name": "SIGN_GLOBAL_RATE_LIMIT",
+          "namespace_id": "3002",
+          "simple": { "limit": 80, "period": 10 },
+        },
+        {
+          "name": "SIGNATURES_RATE_LIMIT",
+          "namespace_id": "3003",
+          "simple": { "limit": 20, "period": 60 },
+        },
+        {
+          "name": "OG_RATE_LIMIT",
+          "namespace_id": "3004",
+          "simple": { "limit": 10, "period": 60 },
+        },
+        {
+          "name": "OG_GLOBAL_RATE_LIMIT",
+          "namespace_id": "3005",
+          "simple": { "limit": 40, "period": 10 },
+        },
+      ],
+    },
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "fuck-shorts",
+      "database_id": "786a5f39-6543-4d4c-afad-0e1f0e070f10",
+      "migrations_dir": "../../packages/db/drizzle",
+    },
+  ],
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true,
+      "persist": true,
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+    },
+  },
+}

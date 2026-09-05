@@ -1,0 +1,27 @@
+{
+  "name": "@fuck-shorts/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.js"
+  },
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint --config index.js .",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "prettier": "@fuck-shorts/prettier-config",
+  "dependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.10.0",
+    "typescript-eslint": "^8.69.0"
+  },
+  "devDependencies": {
+    "@fuck-shorts/prettier-config": "workspace:*",
+    "@fuck-shorts/tsconfig": "workspace:*",
+    "@types/node": "^22.18.1",
+    "prettier": "^3.9.6",
+    "typescript": "^5.9.2"
+  }
+}

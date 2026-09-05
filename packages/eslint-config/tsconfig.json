@@ -1,0 +1,14 @@
+{
+  "extends": "@fuck-shorts/tsconfig",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "maxNodeModuleJsDepth": 0
+  },
+  "include": ["index.js"]
+}

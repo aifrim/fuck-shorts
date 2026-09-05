@@ -1,0 +1,21 @@
+{
+  "name": "@fuck-shorts/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./tsconfig.json",
+    "./tsconfig.json": "./tsconfig.json"
+  },
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "prettier --check .",
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json"
+  },
+  "dependencies": {
+    "@tsconfig/strictest": "^2.0.8"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.6",
+    "typescript": "^5.9.2"
+  }
+}

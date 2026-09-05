@@ -1,0 +1,32 @@
+{
+  "name": "@fuck-shorts/i18n",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "prettier": "@fuck-shorts/prettier-config",
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@fuck-shorts/eslint-config": "workspace:*",
+    "@fuck-shorts/prettier-config": "workspace:*",
+    "@fuck-shorts/tsconfig": "workspace:*",
+    "@types/react": "^19.2.2",
+    "eslint": "^10.10.0",
+    "prettier": "^3.9.6",
+    "react": "^19.2.0",
+    "typescript": "^5.9.2"
+  }
+}

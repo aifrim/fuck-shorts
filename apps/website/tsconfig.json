@@ -1,0 +1,9 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "types": ["astro/client", "@cloudflare/workers-types"]
+  },
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist", "vitest.config.ts", "scripts"]
+}

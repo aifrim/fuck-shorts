@@ -1,0 +1,77 @@
+---
+description: No regex, no relative .js imports, Tailwind-only styling, dash-case files / PascalCase UI components, readable whitespace, intentional comments
+alwaysApply: true
+---
+
+# Coding standards (non-negotiable)
+
+## 1. NEVER use regex
+
+No RegExp literals, `new RegExp`, or String/RegExp methods with patterns (`.match`, `.replace(/…/)`, `.split(/…/)`, `.test`, `.exec`, `.search`). Playwright/Vitest matchers with `/pattern/` are also forbidden. Shared ESLint (`packages/eslint-config`) bans regex literals/constructors and pattern-based string APIs — keep that in sync when this rule changes.
+
+```typescript
+// ❌ BAD
+const ok = /^[a-f0-9]{64}$/i.test(hash);
+url.replace(/\/$/, "");
+page.getByRole("button", { name: /Copy/i });
+
+// ✅ GOOD
+function isSha256Hex(value: string): boolean {
+  if (value.length !== 64) return false;
+  for (const ch of value) {
+    const c = ch.toLowerCase();
+    if ((c < "0" || c > "9") && (c < "a" || c > "f")) return false;
+  }
+  return true;
+}
+url.endsWith("/") ? url.slice(0, -1) : url;
+page.getByRole("button", { name: "Copy share text" });
+```
+
+Use `includes` / `startsWith` / `endsWith` / `indexOf` / `slice` / simple loops instead.
+
+## 2. Always use Tailwind CSS
+
+Style UI with Tailwind utility classes. Do not add CSS modules or large ad-hoc component CSS when utilities suffice. Theme tokens, keyframes, and page atmosphere in `global.css` may stay as the design system.
+
+## 3. Code whitespace
+
+Group related lines with blank lines. Do not reformat the whole repo blindly—apply when editing.
+
+## 4. Comments for intent
+
+Add short comments on non-obvious logic (why/intent). Skip noise on trivial lines. When touching a file for rules 1–4, improve comments there too.
+
+## 5. File and component naming
+
+- **Filenames**: dash-case (`generation-heuristic.ts`, `generation-features.ts`, `landing.spec.ts`).
+- **UI components**: PascalCase for the file and the export (`SignPanel.tsx` → `export default function SignPanel`).
+- Non-component modules (utils, server, i18n, tests) stay dash-case — never camelCase or PascalCase filenames.
+
+```typescript
+// ❌ BAD
+// generationHeuristic.ts
+// generationFeatures.ts
+// components/signPanel.tsx
+
+// ✅ GOOD
+// generation-heuristic.ts
+// generation-features.ts
+// components/SignPanel.tsx
+```
+
+## 6. Never import or export `.js` paths
+
+Omit extensions on relative TypeScript modules (`from "./client"`, not `from "./client.js"`). Bundler `moduleResolution` resolves them.
+
+Exception: only when a package’s published `exports` map has no extensionless key. Prefer extensionless package subpaths when they exist.
+
+```typescript
+// ❌ BAD
+import { createDb } from "./client.js";
+export * from "./schema.js";
+
+// ✅ GOOD
+import { createDb } from "./client";
+export * from "./schema";
+```

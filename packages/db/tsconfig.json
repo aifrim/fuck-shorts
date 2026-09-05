@@ -1,0 +1,9 @@
+{
+  "extends": "@fuck-shorts/tsconfig",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["node", "@cloudflare/workers-types"]
+  },
+  "include": ["src"]
+}
